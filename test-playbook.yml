@@ -6,4 +6,7 @@
     - vars/skytap.yml
 
   tasks:
-    - import_tasks: tasks/get_nat_ips.yml
+    - set_fact:
+        env_name: dev1
+        
+    - import_tasks: tasks/get_envy_by_tag.yml

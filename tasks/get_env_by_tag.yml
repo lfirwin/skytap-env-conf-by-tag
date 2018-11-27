@@ -1,21 +1,17 @@
-# Given an environment name in Skytap, return the Primary and Secondary NAT IPs
-#
+# Given an environment name in Skytap, get the Skytap configuration data structure for it.
 # This should be run from the localhost.
 #
 # To execute these tasks import them into your playbook:
 #
-# - name: Get NAT IPs
-#   import_tasks: ../../skytap/tasks/get_nat_ips.yml
+# - name: Get Environment Config
+#   include_tasks: tasks/get_nat_ips.yml
 #   delegate_to: localhost
 #   run_once: true
 #
 # NOTE: Path to task YAML file is relative to the component importing it.
 #
-# To access the NAT IPs after these tasks are executed, reference them like this:
-# "{{ hostvars['localhost']['primary_nat'] }}"
-#
-# IMPORTANT: Any playbook that uses these tasks MUST use the correct ansible-vault.pass file
-# since the 'api_token' is encrypted using ansible-vault.
+# The corresponding Skytap configuration data structure will be in 'skytap_env'.
+
 - name: Read Environments
   uri:
     url: https://cloud.skytap.com/v2/configurations.json?count=999
