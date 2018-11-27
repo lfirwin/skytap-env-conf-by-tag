@@ -1,0 +1,6 @@
+---
+api_user: your_skytap_id_here
+api_token: your_token_here
+skytap_api_headers:
+  accept: application/json
+  content-type: application/json

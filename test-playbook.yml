@@ -1,0 +1,9 @@
+- name: Lee's Test Playbook for Skytap
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  vars_files:
+    - vars/skytap.yml
+
+  tasks:
+    - import_tasks: tasks/get_nat_ips.yml

@@ -1,0 +1,54 @@
+# Given an environment name in Skytap, return the Primary and Secondary NAT IPs
+#
+# This should be run from the localhost.
+#
+# To execute these tasks import them into your playbook:
+#
+# - name: Get NAT IPs
+#   import_tasks: ../../skytap/tasks/get_nat_ips.yml
+#   delegate_to: localhost
+#   run_once: true
+#
+# NOTE: Path to task YAML file is relative to the component importing it.
+#
+# To access the NAT IPs after these tasks are executed, reference them like this:
+# "{{ hostvars['localhost']['primary_nat'] }}"
+#
+# IMPORTANT: Any playbook that uses these tasks MUST use the correct ansible-vault.pass file
+# since the 'api_token' is encrypted using ansible-vault.
+- name: Read Environments
+  uri:
+    url: https://cloud.skytap.com/v2/configurations.json?count=999
+    user: "{{api_user}}"
+    password: "{{api_token}}"
+    force_basic_auth: yes
+    headers: "{{skytap_api_headers}}"
+    return_content: yes
+  register: skytap_env
+
+- name: Set environment id to empty value
+  set_fact:
+    env_id: ""
+
+- name: Find "{{env_name}}"
+  set_fact:
+    env_id: "{{item.id}}"
+  with_items:
+    - "{{skytap_env.json}}"
+  when: env_name in item.tag_list
+  no_log: True
+
+- fail:
+    msg: "{{env_name}} not found"
+  when: env_id == ""
+
+- name: Get environment config for "{{env_name}}"
+  uri:
+    url: "https://cloud.skytap.com/v2/configurations/{{env_id}}"
+    user: "{{api_user}}"
+    password: "{{api_token}}"
+    force_basic_auth: yes
+    headers: "{{skytap_api_headers}}"
+    return_content: yes
+  register: skytap_env
+
